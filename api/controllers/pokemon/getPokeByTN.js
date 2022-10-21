@@ -5,23 +5,35 @@ const Joi = require("joi");
 const path = require("path");
 
 const requestSchema = Joi.object({
-  id: Joi.string(),
-  name: Joi.string(),
-  types: Joi.string(),
+  type: Joi.string(),
+  search: Joi.string(),
   url: Joi.string(),
+  page: Joi.number().default(1),
+  limit: Joi.number().default(10),
 });
 
 function getPokeByTN(req, res, next) {
   try {
-    const { ...filterQuery } = validateSchema(requestSchema, req.query);
+    const { page, limit, ...tempQuery } = validateSchema(
+      requestSchema,
+      req.query
+    );
+    let filterQuery = {};
+    if (tempQuery.type) {
+      filterQuery = { types: tempQuery.type };
+    }
+
+    if (tempQuery.search) {
+      filterQuery = { name: tempQuery.search };
+    }
 
     const filePath = path.join(__dirname, "../../../pokemon.json");
 
     const { pokemons } = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-
-    if (    lodash.isEmpty(filterQuery)) {
-      console.log("clg if isEmpty", pokemons);
-      res.status(200).send(pokemons);
+    let offset = limit * (page - 1);
+    if (lodash.isEmpty(filterQuery)) {
+      console.log("clg if isEmpty");
+      res.status(200).send(pokemons.slice(offset, offset + limit));
     }
 
     let result = [];
@@ -34,10 +46,10 @@ function getPokeByTN(req, res, next) {
     //stuck at find by types
 
     //send response
-    res.status(200).send(result);
+    res.status(200).send({data: result.slice(offset, offset + page)});
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = {getPokeByTN}
+module.exports = { getPokeByTN };

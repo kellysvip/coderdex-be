@@ -9,7 +9,7 @@ var router = express.Router();
 
 
 
-// router.get('/', getPokeByTN)
+router.get('/', getPokeByTN)
 
 router.post("/", createPoke);
 
@@ -17,7 +17,7 @@ router.put("/:pokeId", updatePoke);
 
 router.delete("/:pokeId", deletePoke);
 
-router.get('/', getPokeLocation)
+// router.get('/', getPokeLocation)
 
 
 module.exports = router;
