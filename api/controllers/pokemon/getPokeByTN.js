@@ -33,7 +33,7 @@ function getPokeByTN(req, res, next) {
     let offset = limit * (page - 1);
     if (lodash.isEmpty(filterQuery)) {
       console.log("clg if isEmpty");
-      res.status(200).send(pokemons.slice(offset, offset + limit));
+      res.status(200).send({data: pokemons.slice(offset, offset + limit)});
     }
 
     let result = [];

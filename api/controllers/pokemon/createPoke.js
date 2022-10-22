@@ -24,7 +24,7 @@ function createPoke(req, res, next) {
     validateNameTypes(name, types, pokemons)
 
     const newPokemon = {
-      id: crypto.randomBytes(4).toString("hex"),
+      id: pokemons.length+1,
       name,
       types,
       url,

@@ -11,13 +11,18 @@ const requestSchema = Joi.object({
   url: Joi.string(),
 });
 
+const paramsSchema = Joi.object({
+  pokeId: Joi.number().required()
+})
+
 function updatePoke(req, res, next) {
   try {
     const { name, types, url } = (updates = validateSchema(
       requestSchema,
       req.body
     ));
-    const { pokeId } = req.params;
+    const { pokeId } = validateSchema(paramsSchema, req.params)
+
     const filePath = path.join(__dirname, "../../../pokemon.json");
     
     //Read data from db.json then parse to JSobject
