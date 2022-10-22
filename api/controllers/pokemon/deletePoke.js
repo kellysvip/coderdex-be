@@ -34,6 +34,7 @@ function deletePoke(req, res, next) {
     fs.writeFileSync(filePath, JSON.stringify(poke));
     res.status(200).send({});
   } catch (error) {
+    next(createError(401, error))
     next(error)
   }
 }

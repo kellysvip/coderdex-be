@@ -3,6 +3,7 @@ const { validateSchema } = require("../../../ultis/joiValidate");
 const fs = require("fs");
 const Joi = require("joi");
 const path = require("path");
+const createHttpError = require("http-errors");
 
 const paramsSchema = Joi.object({
   pokeId: Joi.number(),
@@ -34,7 +35,8 @@ function getPokeById(req, res, next) {
       previousPokemon: pokemons[targetIndex - 1],
     });
   } catch (error) {
-    next(error);
+    next(createHttpError(401, error))
+    next();
   }
 }
 

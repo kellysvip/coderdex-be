@@ -6,7 +6,7 @@ function throwError(text) {
   throw exception;
 }
 
-function validateNameTypes(name, types, data) {
+function validateNameTypes(id, name, types, data) {
   const checkName = data.findIndex((pokemon) => pokemon.name === name);
   if (checkName > 0) {
     throwError(`Pokemon has exist`);
@@ -22,6 +22,11 @@ function validateNameTypes(name, types, data) {
       throwError(`Types is not valid`);
     }
   });
+
+  const checkId = data.findIndex((pokemon) => pokemon.id === id);
+  if (checkId > 0) {
+    throwError(`Pokemon has exist`);
+  }
 }
 
 module.exports = { validateNameTypes };

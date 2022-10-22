@@ -3,6 +3,7 @@ const { validateNameTypes } = require("../../../ultis/validateNameTypes");
 const fs = require("fs");
 const Joi = require("joi");
 const path = require("path");
+const createHttpError = require("http-errors");
 
 
 const requestSchema = Joi.object({
@@ -17,7 +18,7 @@ const paramsSchema = Joi.object({
 
 function updatePoke(req, res, next) {
   try {
-    const { name, types, url } = (updates = validateSchema(
+    const { name, types } = (updates = validateSchema(
       requestSchema,
       req.body
     ));
@@ -48,6 +49,7 @@ function updatePoke(req, res, next) {
     //put send response
     res.status(200).send(updatePoke);
   } catch (error) {
+    next(createHttpError(401, error))
     next(error);
   }
 }

@@ -3,6 +3,7 @@ const { validateSchema } = require("../../../ultis/joiValidate");
 const fs = require("fs");
 const Joi = require("joi");
 const path = require("path");
+const createHttpError = require("http-errors");
 
 const requestSchema = Joi.object({
   type: Joi.string(),
@@ -11,6 +12,10 @@ const requestSchema = Joi.object({
   page: Joi.number().default(1),
   limit: Joi.number().default(10),
 });
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 function getPokeByTN(req, res, next) {
   try {
@@ -31,23 +36,35 @@ function getPokeByTN(req, res, next) {
 
     const { pokemons } = JSON.parse(fs.readFileSync(filePath, "utf-8"));
     let offset = limit * (page - 1);
+    console.log(filterQuery);
     if (lodash.isEmpty(filterQuery)) {
-      console.log("clg if isEmpty");
-      res.status(200).send({data: pokemons.slice(offset, offset + limit)});
+      res.status(200).send({ data: pokemons.slice(offset, offset + limit) });
     }
 
     let result = [];
 
     Object.keys(filterQuery).forEach((condition) => {
-      result = result.length
-        ? result.filter((poke) => poke[condition] === filterQuery[condition])
-        : pokemons.filter((poke) => poke[condition] === filterQuery[condition]);
+      if (condition === "name") {
+        // result = result.length
+        // ? result.filter((poke) => poke[condition] === filterQuery[condition])
+        // : pokemons.filter((poke) => poke[condition] === filterQuery[condition]);
+        result = pokemons.filter(
+          (poke) => poke[condition] === filterQuery[condition]
+        );
+      } else if (condition === "types") {
+        result = pokemons.filter((poke) => {
+          return (
+            poke[condition][0] ===
+              capitalizeFirstLetter(filterQuery[condition]) ||
+            poke[condition][1] === capitalizeFirstLetter(filterQuery[condition])
+          );
+        });
+      }
     });
-    //stuck at find by types
-
     //send response
-    res.status(200).send({data: result.slice(offset, offset + page)});
+    res.status(200).send({ data: result.slice(offset, offset + limit) });
   } catch (error) {
+    next(createHttpError(401, error))
     next(error);
   }
 }

@@ -3,11 +3,11 @@ const {validateNameTypes} = require("../../../ultis/validateNameTypes");
 const fs = require("fs");
 const Joi = require("joi");
 const path = require("path");
-const crypto = require("crypto");
+const createHttpError = require("http-errors");
 
 
 const requestSchema = Joi.object({
-  //   id: Joi.number().required(),
+  id: Joi.number(),
   name: Joi.string().required(),
   types: Joi.array().required(),
   url: Joi.string().required(),
@@ -15,28 +15,29 @@ const requestSchema = Joi.object({
 
 function createPoke(req, res, next) {
   try {
-    const { name, types, url } = validateSchema(requestSchema, req.body);
+    const {id, name, types, url } = validateSchema(requestSchema, req.body);
     const filePath = path.join(__dirname, "../../../pokemon.json");
 
     const { pokemons } = (poke = JSON.parse(
       fs.readFileSync(filePath, "utf-8")
     ));
-    validateNameTypes(name, types, pokemons)
+    validateNameTypes(id, name, types, pokemons)
 
     const newPokemon = {
-      id: pokemons.length+1,
+      id: id || pokemons.length+1,
       name,
       types,
       url,
     };
-
+    console.log(newPokemon)
     pokemons.push(newPokemon);
     poke.pokemons = pokemons;
-
+    
     fs.writeFileSync(filePath, JSON.stringify(poke));
     res.status(200).send(newPokemon);
   } catch (error) {
-    next(error);
+    next(createHttpError(401, error))
+    next();
   }
 }
 
