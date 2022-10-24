@@ -22,11 +22,13 @@ const createPokemon = async () => {
         };
     else return;
   });
-
-  newData.map((newData) => {
-    if (newData === null) delete newData;
-  });
-  fs.writeFileSync("pokemon.json", JSON.stringify(newData));
+// console.log(newData)
+//   // newData.map((data) => {
+//   //   // if () delete data;
+//   //   console.log(data === undefined)
+//   // });
+  let db = {data: newData.slice(0,721), totalPokemons: newData.slice(0,721).length }
+  fs.writeFileSync("pokemon.json",  JSON.stringify(db));
 
   
 };

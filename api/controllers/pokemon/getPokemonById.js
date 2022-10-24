@@ -1,4 +1,3 @@
-const lodash = require("lodash");
 const { validateSchema } = require("../../../ultis/joiValidate");
 const fs = require("fs");
 const Joi = require("joi");
@@ -15,10 +14,10 @@ function getPokeById(req, res, next) {
 
     const filePath = path.join(__dirname, "../../../pokemon.json");
 
-    const { pokemons } = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const { data } = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
     //find pokemon by id
-    const targetIndex = pokemons.findIndex((pokemon) => pokemon.id === pokeId);
+    const targetIndex = data.findIndex((pokemon) => pokemon.id === pokeId);
 
     if (targetIndex < 0) {
       const exception = new Error(`Pokemon not found`);
@@ -26,13 +25,11 @@ function getPokeById(req, res, next) {
       throw exception;
     }
 
-    //stuck at find by types
-
-    //send response
+    
     res.status(200).send({
-      pokemon: pokemons[targetIndex],
-      nextPokemon: pokemons[targetIndex + 1],
-      previousPokemon: pokemons[targetIndex - 1],
+      pokemon: data[targetIndex],
+      nextPokemon: data[targetIndex === data.length - 1 ? 0: targetIndex+1],
+      previousPokemon: data[targetIndex === 0 ? data.length - 1: targetIndex-1]
     });
   } catch (error) {
     next(createHttpError(401, error))

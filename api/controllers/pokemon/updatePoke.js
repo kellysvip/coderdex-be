@@ -23,17 +23,14 @@ function updatePoke(req, res, next) {
       req.body
     ));
     const { pokeId } = validateSchema(paramsSchema, req.params)
-
     const filePath = path.join(__dirname, "../../../pokemon.json");
-    
     //Read data from db.json then parse to JSobject
-    const { pokemons } = (poke = JSON.parse(
+    const { data } = (poke = JSON.parse(
       fs.readFileSync(filePath, "utf-8")
     ));
-    validateNameTypes(name, types, pokemons)
-
+    validateNameTypes(999,name, types, data)
     //find pokemon by id
-    const targetIndex = pokemons.findIndex((pokemon) => pokemon.id === pokeId);
+    const targetIndex = data.findIndex((pokemon) => pokemon.id === pokeId);
 
     if (targetIndex < 0) {
       const exception = new Error(`Pokemon not found`);
@@ -41,8 +38,8 @@ function updatePoke(req, res, next) {
       throw exception;
     }
     //Update new content to pokemon  JS object
-    const updatePoke = { ...poke.pokemons[targetIndex], ...updates };
-    poke.pokemons[targetIndex] = updatePoke;
+    const updatePoke = { ...poke.data[targetIndex], ...updates };
+    poke.data[targetIndex] = updatePoke;
 
     //save to pokemon.json
     fs.writeFileSync(filePath, JSON.stringify(poke));

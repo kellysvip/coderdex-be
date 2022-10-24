@@ -14,12 +14,12 @@ function deletePoke(req, res, next) {
 
     const filePath = path.join(__dirname, "../../../pokemon.json");
     //Read data from db.json then parse to JSobject
-    const { pokemons } = (poke = JSON.parse(
+    const { data } = (poke = JSON.parse(
       fs.readFileSync(filePath, "utf-8")
     ));
 
     //find pokemon by id
-    const targetIndex = pokemons.findIndex((pokemon) => pokemon.id === pokeId);
+    const targetIndex = data.findIndex((pokemon) => pokemon.id === pokeId);
 
     console.log('targetIndex', targetIndex)
     if (targetIndex < 0) {
@@ -29,9 +29,11 @@ function deletePoke(req, res, next) {
     }
 
     //filter db books object
-    poke.pokemons = pokemons.filter((pokemon) => pokemon.id !== Number(pokeId));
+    poke.data = data.filter((pokemon) => pokemon.id !== Number(pokeId));
+    poke.totalPokemons = data.length
     //save to pokemon.json
     fs.writeFileSync(filePath, JSON.stringify(poke));
+
     res.status(200).send({});
   } catch (error) {
     next(createError(401, error))

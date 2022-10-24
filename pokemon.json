@@ -1,5 +1,5 @@
 {
-  "pokemons": [
+  "data": [
     {
       "id": 1,
       "name": "bulbasaur",
@@ -4326,5 +4326,6 @@
       "types": ["Fire", "Water"],
       "url": "http://localhost:8000/images/721.jpg"
     }
-  ]
+  ],
+  "totalPokemons": 723
 }

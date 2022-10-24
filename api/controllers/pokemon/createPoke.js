@@ -18,20 +18,21 @@ function createPoke(req, res, next) {
     const {id, name, types, url } = validateSchema(requestSchema, req.body);
     const filePath = path.join(__dirname, "../../../pokemon.json");
 
-    const { pokemons } = (poke = JSON.parse(
+    const { data } = (poke = JSON.parse(
       fs.readFileSync(filePath, "utf-8")
     ));
-    validateNameTypes(id, name, types, pokemons)
+    validateNameTypes(id, name, types, data)
 
     const newPokemon = {
-      id: id || pokemons.length+1,
+      id: id || data.length+1,
       name,
       types,
       url,
     };
     console.log(newPokemon)
-    pokemons.push(newPokemon);
-    poke.pokemons = pokemons;
+    data.push(newPokemon);
+    poke.data = data;
+    poke.totalPokemons = data.length
     
     fs.writeFileSync(filePath, JSON.stringify(poke));
     res.status(200).send(newPokemon);
